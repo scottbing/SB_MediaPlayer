@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name='SB_BSS5250_MediaPlayer'
