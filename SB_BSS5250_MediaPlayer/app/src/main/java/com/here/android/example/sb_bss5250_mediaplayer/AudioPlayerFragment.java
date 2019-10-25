@@ -11,7 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,6 +27,8 @@ public class AudioPlayerFragment extends Fragment {
     private MediaPlayer mediaPlayer = null;
     VideoView videoView = null;
     Button playButton;
+    GestureDetector gestureDetector;
+
     View v = null;
     private String MP3URL = "https://www.nasa.gov/mp3/640149main_Computers%20are%20in%20Control.mp3";
 
@@ -36,6 +40,19 @@ public class AudioPlayerFragment extends Fragment {
         if(v == null) {
             // Inflate the layout for this fragment
             v = inflater.inflate(R.layout.fragment_audio_player, conatiner, false);
+
+            //create custom gesture detector
+            gestureDetector  =  new GestureDetector(getActivity(), simpleOnGestureListener);
+            videoView  = (VideoView) v.findViewById(R.id.video_view);
+            //listen for touch events on videoView
+            videoView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    //pass touch events to custom gesture detector
+                    return gestureDetector.onTouchEvent(motionEvent);
+                }
+            });
+
 
             playButton = (Button) v.findViewById(R.id.play_button);
             playButton.setOnClickListener(playClickedListener);
@@ -50,6 +67,32 @@ public class AudioPlayerFragment extends Fragment {
 
         }
         return v;
+    }
+
+    private GestureDetector.SimpleOnGestureListener simpleOnGestureListener =
+            new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                    float diff = e2.getX() - e1.getX();
+                    seekMedia(diff);
+                    return super.onScroll(e1, e2, distanceX, distanceY);
+                }
+
+                @Override
+                public boolean onDown(MotionEvent e) {
+                    // return super.onDown(e);
+                    return true;
+                }
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    return super.onDoubleTap(e);
+                }
+            };
+
+    private void seekMedia(float offset){
+        int newPos = (int)videoView.getCurrentPosition() + (int)offset;
+        videoView.seekTo(newPos);
     }
 
     @Override
