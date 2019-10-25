@@ -173,15 +173,19 @@ public class AudioPlayerFragment extends Fragment {
     }
 
     private void pauseMedia() {
-        mediaPlayer.pause();
-        playButton.setText("Play");
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+            playButton.setText("Play");
+        }
     }
 
     private void stopMedia() {
-        mediaPlayer.stop();
-        mediaPlayer.reset();
-        mediaPlayer.release();
-        mediaPlayer = null;
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     private void changeMedia() {
@@ -189,13 +193,13 @@ public class AudioPlayerFragment extends Fragment {
             stopMedia();
             //playMedia("https://history.nasa.gov/afj/ap11fj/audio/1892800.mp3");
         }
-        String path = "android.resource://" + this.getActivity().getPackageName() + "/raw/samp1";
-        videoView.setVideoPath(path);
+        /*String path = "android.resource://" + this.getActivity().getPackageName() + "/" + R.raw.samp;
+        videoView.setVideoPath(path);*/
 
 
-        /*Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.test);
-        videoview.setVideoURI(uri);
-        videoview.start();*/
+        Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.samp);
+        videoView.setVideoURI(uri);
+        videoView.start();
 
     }
 
