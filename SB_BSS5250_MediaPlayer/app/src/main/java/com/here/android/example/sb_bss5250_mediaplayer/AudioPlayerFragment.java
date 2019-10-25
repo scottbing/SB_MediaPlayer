@@ -28,6 +28,7 @@ public class AudioPlayerFragment extends Fragment {
     VideoView videoView = null;
     Button playButton;
     GestureDetector gestureDetector;
+    private int currentPosition = 0;
 
     View v = null;
     private String MP3URL = "https://www.nasa.gov/mp3/640149main_Computers%20are%20in%20Control.mp3";
@@ -86,7 +87,17 @@ public class AudioPlayerFragment extends Fragment {
 
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
-                    return super.onDoubleTap(e);
+                    //return super.onDoubleTap(e);
+                    if (videoView != null) {
+                        if (videoView.isPlaying()) {
+                            currentPosition = videoView.getCurrentPosition();
+                            videoView.pause();
+                        }else {
+                            videoView.seekTo(currentPosition);
+                            videoView.start();
+                        }
+                    }
+                    return true;
                 }
             };
 
@@ -149,9 +160,6 @@ public class AudioPlayerFragment extends Fragment {
                     }
                 }
         );
-
-
-
     }
 
     private void playMedia(@Nullable String path) {
