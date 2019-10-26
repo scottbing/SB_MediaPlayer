@@ -29,6 +29,7 @@ public class AudioPlayerFragment extends Fragment {
     Button playButton, videoButton;
     GestureDetector gestureDetector;
     private int currentPosition = 0;
+    private boolean whichOne = true;
 
     View v = null;
     private String MP3URL = "https://www.nasa.gov/mp3/640149main_Computers%20are%20in%20Control.mp3";
@@ -170,7 +171,7 @@ public class AudioPlayerFragment extends Fragment {
                 mediaPlayer = MediaPlayer.create(getActivity(), R.raw.one_small_step);
                 mediaPlayer.start();
             } else {
-                loadMP3URL(MP3URL);
+                loadMP3URL(path);
             }
             playButton.setText("Play");
             //mediaPlayer = MediaPlayer.create((getActivity(), R.raw.one_small_step))
@@ -225,22 +226,33 @@ public class AudioPlayerFragment extends Fragment {
     private void changeAudio() {
         //swap the audio
         if (mediaPlayer != null) {
-            mediaPlayer.pause();
-            /*mediaPlayer.stop();
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;*/
-            //playMedia("https://www.nasa.gov/mp3/569462main_eagle_has_landed.mp3");
-            playMedia("https://www.nasa.gov/mp3/590325main_ringtone_kennedy_WeChoose.mp3");
+            if (whichOne) {
+                mediaPlayer.pause();
+                loadMP3URL("https://www.nasa.gov/mp3/569462main_eagle_has_landed.mp3");
+                whichOne = false;
+            }else{
+                mediaPlayer.pause();
+                loadMP3URL("https://www.nasa.gov/mp3/590325main_ringtone_kennedy_WeChoose.mp3");
+                whichOne = true;
+            }
         }
     }
 
     private void changeVideo() {
         // swap the video
-        Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.small);
-        videoView.stopPlayback();
-        videoView.setVideoURI(uri);
-        videoView.start();
+        if (whichOne) {
+            Uri uri = Uri.parse("android.resource://" + this.getActivity().getPackageName() + "/" + R.raw.small);
+            videoView.stopPlayback();
+            videoView.setVideoURI(uri);
+            videoView.start();
+            whichOne = false;
+        } else {
+            Uri uri = Uri.parse("android.resource://" + this.getActivity().getPackageName() + "/" + R.raw.samp);
+            videoView.stopPlayback();
+            videoView.setVideoURI(uri);
+            videoView.start();
+            whichOne = true;
+        }
     }
 
     private View.OnClickListener playClickedListener = new View.OnClickListener() {
