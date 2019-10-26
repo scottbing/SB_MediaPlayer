@@ -26,7 +26,7 @@ public class AudioPlayerFragment extends Fragment {
 
     private MediaPlayer mediaPlayer = null;
     VideoView videoView = null;
-    Button playButton;
+    Button playButton, videoButton;
     GestureDetector gestureDetector;
     private int currentPosition = 0;
 
@@ -63,6 +63,8 @@ public class AudioPlayerFragment extends Fragment {
             pauseButton.setOnClickListener(pauseClickedListener);
             Button changeButton = (Button) v.findViewById(R.id.change_button);
             changeButton.setOnClickListener(changeClickedListener);
+            videoButton = (Button) v.findViewById(R.id.video_button);
+            videoButton.setOnClickListener(videoClickedListener);
 
             videoView = (VideoView) v.findViewById(R.id.video_view);
 
@@ -170,15 +172,38 @@ public class AudioPlayerFragment extends Fragment {
             } else {
                 loadMP3URL(MP3URL);
             }
-            playButton.setText("Pause");
+            playButton.setText("Play");
             //mediaPlayer = MediaPlayer.create((getActivity(), R.raw.one_small_step))
         } else if (!mediaPlayer.isPlaying()) {  //if mediaPlayer is not playing
+            mediaPlayer = MediaPlayer.create(getActivity(), R.raw.countdown_launch);
             mediaPlayer.start();    //start from the beginning
             playButton.setText("Pause");
         } else {
-            pauseMedia();
+            //pauseMedia();
+            loadMP3URL(path);
         }
     }
+
+    private void playVideo(@NonNull  int resID) {
+        if (videoView == null) {
+            if(resID == 0) {
+                Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.samp);
+                videoView.setVideoURI(uri);
+                videoView.start();
+            } else {
+                Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+resID);
+                videoView.setVideoURI(uri);
+                videoView.start();
+            }
+            videoButton.setText("Play Video");
+        } else if (!videoView.isPlaying()) {  //if videoView is not playing
+            Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.samp);
+            videoView.setVideoURI(uri);
+            videoView.start();    //start from the beginning
+        }
+    }
+
+
 
     private void pauseMedia() {
         if (mediaPlayer != null) {
@@ -193,22 +218,28 @@ public class AudioPlayerFragment extends Fragment {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
+            playButton.setText("Play");
         }
     }
 
-    private void changeMedia() {
+    private void changeAudio() {
+        //swap the audio
         if (mediaPlayer != null) {
-            stopMedia();
-            //playMedia("https://history.nasa.gov/afj/ap11fj/audio/1892800.mp3");
+            mediaPlayer.pause();
+            /*mediaPlayer.stop();
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;*/
+            //playMedia("https://www.nasa.gov/mp3/569462main_eagle_has_landed.mp3");
+            playMedia("https://www.nasa.gov/mp3/590325main_ringtone_kennedy_WeChoose.mp3");
         }
-        /*String path = "android.resource://" + this.getActivity().getPackageName() + "/" + R.raw.samp;
-        videoView.setVideoPath(path);*/
+    }
 
-
-        Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.samp);
+    private void changeVideo() {
+        // swap the video
+        Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.small);
         videoView.setVideoURI(uri);
         videoView.start();
-
     }
 
     private View.OnClickListener playClickedListener = new View.OnClickListener() {
@@ -235,7 +266,23 @@ public class AudioPlayerFragment extends Fragment {
     private View.OnClickListener changeClickedListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-          changeMedia();
+            if (videoView != null && mediaPlayer != null) {
+                if (videoView.isPlaying()) {
+                    //playVideo(R.raw.small);
+                    changeVideo();
+                }
+                if (mediaPlayer.isPlaying()) {
+                    //playMedia("https://history.nasa.gov/afj/ap11fj/audio/1892800.mp3");
+                    changeAudio();
+                }
+            }
+        }
+    };
+
+    private View.OnClickListener videoClickedListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            playVideo(0);
         }
     };
 }
