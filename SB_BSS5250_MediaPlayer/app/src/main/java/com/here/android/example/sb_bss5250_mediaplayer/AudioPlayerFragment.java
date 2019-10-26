@@ -238,6 +238,7 @@ public class AudioPlayerFragment extends Fragment {
     private void changeVideo() {
         // swap the video
         Uri uri = Uri.parse("android.resource://"+this.getActivity().getPackageName()+"/"+R.raw.small);
+        videoView.stopPlayback();
         videoView.setVideoURI(uri);
         videoView.start();
     }
@@ -266,11 +267,13 @@ public class AudioPlayerFragment extends Fragment {
     private View.OnClickListener changeClickedListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (videoView != null && mediaPlayer != null) {
+            if (videoView != null) {
                 if (videoView.isPlaying()) {
                     //playVideo(R.raw.small);
                     changeVideo();
                 }
+            }
+            if (mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
                     //playMedia("https://history.nasa.gov/afj/ap11fj/audio/1892800.mp3");
                     changeAudio();
